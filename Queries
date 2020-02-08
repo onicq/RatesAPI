@@ -1,0 +1,49 @@
+
+USE [TEST]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GetRates]    Script Date: 08.02.2020 20:16:47 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[sp_GetRates] 
+	@A_DATE date,
+	@CODE varchar(3)
+AS
+BEGIN
+IF (@CODE IS NULL) OR @CODE = ''
+SELECT * 
+FROM dbo.R_CURRENCY(nolock) r
+WHERE r.A_DATE = @A_DATE
+ELSE
+SELECT * 
+FROM dbo.R_CURRENCY(nolock) r
+WHERE r.A_DATE = @A_DATE
+AND r.CODE = @CODE
+END;
+----------------------------------------------------------------------------------------------------------
+USE [TEST]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_InsertRates]    Script Date: 08.02.2020 20:28:29 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[sp_InsertRates]
+@TITLE varchar(60),
+@CODE	varchar(3),
+@VALUE numeric(18,2),
+@A_DATE date,
+@MESSAGE varchar(100) OUTPUT
+
+AS
+BEGIN TRY
+INSERT INTO dbo.R_CURRENCY
+(TITLE, CODE, VALUE, A_DATE)
+VALUES(@TITLE, @CODE, @VALUE, @A_DATE)
+END TRY
+BEGIN CATCH
+SET @MESSAGE =(
+SELECT ERROR_MESSAGE());
+END CATCH;
+--------------------------------------------------------------------------------------------------------------------
